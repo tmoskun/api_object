@@ -22,13 +22,13 @@ end
 class Station < ActiveApi::ApiObject 
 end
 ```
-2) Specify the url to load the data from, optionally a command, an api key and parameters(options) for the url; such as the url would look like "http://<api_url>/<command>?key=<api_key>&<parameter1=value1&parameter2=value2...>". 
+2) Specify the url to load the data from, optionally a command, an api key and parameters(options) for the url; such as the url would look like "http://\<api_url\>/\<command\>?key=\<api_key\>&\<parameter1=value1&parameter2=value2...\>". 
 
 This will be defined in the upper object over the function "initialize_from_api". Options for this function:
-:url - specify url
-:command - specify command
-:key - api key
-:url_options - parameters
+- :url - specify url
+- :command - specify command
+- :key - api key
+- :url_options - parameters
 
 
 The following is designed to generate real time departure estimates for BART stations:
@@ -42,7 +42,7 @@ end
 In this example, the url generated to get real time departure estimates from the Richmond station will be:
 http://api.bart.gov/api/etd.aspx?cmd=etd&orig=RICH&key=MW9S-E7SL-26DU-VV8V
 
-3) Define class attributes and mapping of the attributes to the api where the api name is different. To define api simple type mappings, use "api_column <attribute name>, <api attribute name>". 
+3) Define class attributes and mapping of the attributes to the api where the api name is different. To define api simple type mappings, use "api_column \<attribute name\>, \<api attribute name\>". 
 To define api association mapping, use "api_association \<association attribute name\>, \<api attribute name\>, :as => \<association class name\>". Either the second, or the third parameters could be omitted. If the third parameter is omitted, it's mapped to the class name by the attribute name defined in the class. 
 
 In the following example, a simple attribute name is "abbreviation", but the name defined in the api XML documents is "abbr". An association is defined in the attribute :est, the api mapping is :etd and it's an object of the class Estimate. 
