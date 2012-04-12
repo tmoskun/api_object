@@ -89,8 +89,9 @@ stations = data.map {|d| Station.new(d)}
 ```
 
 6) Limitations
-  * Api data must be presented either in XML or in JSON format. The distinction between XML and JSON is determinted automatically. 
-  * This is still a very early version and needs more testing. If something is not working, feel free to submit bugs and or/contribute. 
+
+* Api data must be presented either in XML or in JSON format. The distinction between XML and JSON is determinted automatically. 
+* This is still a very early version and needs more testing. If something is not working, feel free to submit bugs and or/contribute. 
   
 ## Compatibility
 
