@@ -25,10 +25,12 @@ end
 2) Specify the url to load the data from, optionally a command, an api key and parameters(options) for the url; such as the url would look like "http://\<api_url\>/\<command\>?key=\<api_key\>&\<parameter1=value1&parameter2=value2...\>". 
 
 This will be defined in the upper object over the function "initialize_from_api". Options for this function:
-- :url - specify url
-- :command - specify command
-- :key - api key
-- :url_options - parameters
+```
+:url - specify url
+:command - specify command
+:key - api key
+:url_options - parameters
+```
 
 
 The following is designed to generate real time departure estimates for BART stations:
