@@ -27,8 +27,11 @@ end
 This will be defined in the upper object over the function "initialize_from_api". Options for this function:
 ```
 :url - specify url
+
 :command - specify command
+
 :key - api key
+
 :url_options - parameters
 ```
 
