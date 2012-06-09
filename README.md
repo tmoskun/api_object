@@ -22,14 +22,16 @@ end
 class Station < ActiveApi::ApiObject 
 end
 ```
-2) Specify the url to load the data from, optionally a command, an api key and parameters(options) for the url; such as the url would look like "http://\<api_url\>/\<command\>?key=\<api_key\>&\<parameter1=value1&parameter2=value2...\>". 
+2) Specify the url to load the data from, optionally an action and a mode, an api key and parameters(options) for the url; such as the url would look like "http://\<api_url\>/\<action\>?<mode>&key=\<api_key\>&\<parameter1=value1&parameter2=value2...\>". 
 
 This will be defined in the upper object over the function "initialize_from_api". Options for this function:
 
 ```
 :url - specify url
 
-:command - specify command
+:action - specify action
+
+:mode - specify mode (such as 'verbose', 'terse' etc.)
 
 :key - api key
 
@@ -42,7 +44,7 @@ The following is designed to generate real time departure estimates for BART sta
 ```
 class Station
 
-initialize_from_api :url => "http://api.bart.gov/api/", :command => 'etd.aspx', :key => 'MW9S-E7SL-26DU-VV8V', :url_options => {:cmd => 'etd'}
+initialize_from_api :url => "http://api.bart.gov/api/", :action => 'etd.aspx', :key => 'MW9S-E7SL-26DU-VV8V', :url_options => {:cmd => 'etd'}
 
 end
 ```
@@ -57,7 +59,7 @@ In the following example, a simple attribute name is "abbreviation", but the nam
 ```
 class Station < ActiveApi::ApiObject 
 
-initialize_from_api :url => "http://api.bart.gov/api/", :command => 'etd.aspx', :key => 'MW9S-E7SL-26DU-VV8V', :url_options => {:cmd => 'etd'}
+initialize_from_api :url => "http://api.bart.gov/api/", :action => 'etd.aspx', :key => 'MW9S-E7SL-26DU-VV8V', :url_options => {:cmd => 'etd'}
 
 attr_reader :name, :abbreviation, :date, :time, :est
 
@@ -87,11 +89,16 @@ If the data is an array of hashes, then it might be used to create an array of o
 ```
 stations = data.map {|d| Station.new(d)}
 ```
+6) Testing
 
-6) Limitations
+The gem has been tested on BART, Google Weather and NextBus APIs. 
+
+
+7) Limitations
 
 * Api data must be presented either in XML or in JSON format. The distinction between XML and JSON is determinted automatically. 
-* This is still a very early version and needs more testing. If something is not working, feel free to submit bugs and or/contribute. 
+* When using this gem with external APIs, check Terms and Conditions of the API usage. 
+* If something is not working, feel free to submit bugs and or/contribute. 
   
 ## Compatibility
 

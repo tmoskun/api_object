@@ -1,0 +1,49 @@
+<xml_api_reply version="1">
+	<weather module_id="0" tab_id="0" mobile_row="0" mobile_zipped="1" row="0" section="0">
+	<forecast_information>
+		<city data="Mountain View, CA"/>
+		<postal_code data="Mountain View"/>
+		<latitude_e6 data=""/>
+		<longitude_e6 data=""/>
+		<forecast_date data="2012-06-01"/>
+		<current_date_time data="2012-06-01 20:56:00 +0000"/>
+		<unit_system data="US"/>
+	</forecast_information>
+	<current_conditions>
+		<condition data="Clear"/>
+		<temp_f data="75"/>
+		<temp_c data="24"/>
+		<humidity data="Humidity: 51%"/>
+		<icon data="/ig/images/weather/sunny.gif"/>
+		<wind_condition data="Wind: NW at 9 mph"/>
+		</current_conditions>
+	<forecast_conditions>
+		<day_of_week data="Fri"/>
+		<low data="57"/>
+		<high data="78"/>
+		<icon data="/ig/images/weather/mostly_sunny.gif"/>
+		<condition data="Mostly Sunny"/>
+	</forecast_conditions>
+	<forecast_conditions>
+		<day_of_week data="Sat"/>
+		<low data="55"/>
+		<high data="77"/>
+		<icon data="/ig/images/weather/mostly_sunny.gif"/>
+		<condition data="Mostly Sunny"/>
+	</forecast_conditions>
+	<forecast_conditions>
+		<day_of_week data="Sun"/>
+		<low data="54"/>
+		<high data="72"/>
+		<icon data="/ig/images/weather/mostly_sunny.gif"/>
+		<condition data="Mostly Sunny"/>
+	</forecast_conditions>
+	<forecast_conditions>
+		<day_of_week data="Mon"/>
+		<low data="48"/>
+		<high data="68"/>
+		<icon data="/ig/images/weather/chance_of_rain.gif"/>
+		<condition data="Chance of Rain"/>
+	</forecast_conditions>
+	</weather>
+</xml_api_reply>

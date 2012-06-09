@@ -36,7 +36,7 @@ module TestObjects
       end
       
       def ==(other_est)
-        return false if other_est.nil?  
+        return false if other_est.nil?
         self.abbreviation == other_est.abbreviation && self.destination == other_est.destination
       end
       
@@ -48,7 +48,7 @@ module TestObjects
       
       attr_reader :name, :abbreviation, :date, :time, :est
         
-      initialize_from_api :url => "http://api.bart.gov/api/", :command => 'etd.aspx', :key => 'MW9S-E7SL-26DU-VV8V', :url_options => {:cmd => 'etd'}
+      initialize_from_api :url => "http://api.bart.gov/api/", :action => 'etd.aspx', :key => 'MW9S-E7SL-26DU-VV8V', :url_options => {:cmd => 'etd'}
          
       api_column :abbreviation, :abbr
       api_association :est, :etd, :as => TestObjects::Estimate
@@ -60,6 +60,15 @@ module TestObjects
       def ==(other_station)
         return false if other_station.nil?
         self.abbreviation == other_station.abbreviation && self.est == other_station.est
+      end
+      
+      class << self
+        alias_method :general_load_from_xml, :load_from_xml
+              
+        def load_from_xml xml
+          general_load_from_xml(xml, 'root', ['stations', 'station'])
+        end
+      
       end
                
     end
