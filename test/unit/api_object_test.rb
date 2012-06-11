@@ -56,7 +56,7 @@ class ApiObjectTest < MiniTest::Unit::TestCase
 
   def test_should_get_correct_bus_routes
     routes = Route.get_results(:a => 'sf-muni', :command => 'routeList').map {|r| Route.new(r)}
-    assert_equal(routes, @@muni_routes)
+    assert_equal_route_list(routes, @@muni_routes)
   end
   
   def test_should_get_correct_route_information
@@ -66,8 +66,11 @@ class ApiObjectTest < MiniTest::Unit::TestCase
    
   def test_should_handle_invalid_url
     estimate = Station.new(Station.get_results(:orig => 'YES'))
+    assert(estimate.empty?, "Estimate should be an empty object")
     weather = Weather.new(Weather.get_results(:weather => "Here"))
+    assert(weather.empty?, "Weather should be an empty object")
     routes = Route.get_results(:a => 'sffg').map {|r| Route.new(r)}
+    assert(routes.empty?, "Routes should be an empty object")
   end
   
   
@@ -86,6 +89,10 @@ private
        return assert(station.abbreviation != sample_station.abbreviation || station.est.exclude_any?(sample_station.est), "Estimates should be different")
     end
     false
+  end
+  
+  def assert_equal_route_list route_list, sample_route_list
+    return assert(route_list.include_all?(sample_route_list), "Route list should include all the sample routes")
   end
   
     

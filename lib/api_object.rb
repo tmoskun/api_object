@@ -68,7 +68,7 @@ module ActiveApi
                 instance_variable_set("@#{k.to_s}", result)
              end
           end if args.first.is_a?(Hash)
-          puts "WARNING: data passed for initialization was invalid. #{self.class.warning_invalid_url url}" if self.empty?
+          puts "WARNING: data passed for #{self.class} initialization was invalid. #{self.class.warning_invalid_url url}" if self.empty?
       end
       
       def empty?
