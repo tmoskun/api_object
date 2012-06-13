@@ -1,6 +1,7 @@
 require "api_object/version"
 require "api_object/query"
 require "active_support/all"
+require "geo_ip"
 
 module ActiveApi
       
@@ -15,6 +16,15 @@ module ActiveApi
           self.url, self.action, self.key, self.mode, self.url_options, self.data_tags, self.object_name = [options[:url], options[:action], options[:key], options[:mode], (options[:url_options] || {}), ([*options[:data_tags]] || []), (options[:object_name] || self.to_s.downcase.gsub(/^(.+::)(.+)$/, '\2'))]
           instance_eval do
           
+             def get_results_by_ip ip, key, arguments = {}
+                self.api_key = key
+                location = GeoIp.geolocation(ip)
+                raise unless location[:status_code] == "OK"
+                get_results [*arguments.keys].inject({}) { |opts, a| opts.merge(a.to_sym => location[arguments[a.to_sym]]) }
+                rescue
+                  puts "WARNING: Cannot get results or location by ip. Verify that you have a valid key for the ipinfodb.com service"
+             end
+          
              def get_results options = {}
                self.url_options.merge!(:key => self.key) unless self.key.nil?
                [:url, :action, :mode].each {|opt| eval("self.#{opt.to_s} = options.delete(opt)") if options[opt]}
@@ -24,6 +34,10 @@ module ActiveApi
                  puts "WARNING: The request returned no valid data. #{warning_invalid_url result[:url]}"
                  return {}
              end 
+             
+             def api_key=(key)
+                GeoIp.api_key = key
+             end
              
              def warning_invalid_url url
                "The request url is #{url}, please, check if it's invalid of there is no connectivity." unless url.nil?

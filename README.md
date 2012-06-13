@@ -35,6 +35,8 @@ This will be defined in the upper object over the function "initialize_from_api"
 
 :key - api key
 
+:data_tags - specify tag parameters under which object data might be stored, for example <location value='San Francisco'/> - "value" would be a data tag. :data_tags accepts a single value or an array. 
+
 :url_options - parameters
 ```
 
@@ -89,12 +91,59 @@ If the data is an array of hashes, then it might be used to create an array of o
 ```
 stations = data.map {|d| Station.new(d)}
 ```
-6) Testing
+
+6) Getting location based data by ip.
+
+This gem uses [geo_ip gem](https://github.com/jeroenj/geo_ip) and [ipinfodb.com](http://ipinfodb.com/) webservice to retrieve location based on ip. 
+
+The service requires an API key, in order to get it [register](http://ipinfodb.com/register.php) at the web site. 
+
+Consider making a donation to [ipinfodb.com](http://ipinfodb.com/) at [http://ipinfodb.com/donate.php](http://ipinfodb.com/donate.php).
+
+To get the data, call "get_results_by_ip" instead of "get_results":
+
+```
+data = Weather.get_results_by_ip('99.156.82.20', KEY, :weather => :zip_code)
+```
+
+The [geo_ip gem](https://github.com/jeroenj/geo_ip) retrieves location as:
+
+```
+{
+  :status_code    => "OK",
+  :status_message => "",
+  :ip             => "209.85.227.104"
+  :country_code   => "US",
+  :country_name   => "UNITED STATES",
+  :region_name    => "CALIFORNIA",
+  :city           => "MONTEREY PARK",
+  :zip_code       => "91754",
+  :latitude       => "34.0505",
+  :longitude      => "-118.13"
+}
+```
+
+The third parameter in the function is to define what fields from the location object are passed as what parameter. In this case, the original function is:
+
+```
+data = Weather.get_results(:weather => '99.156.82.20')
+```
+
+7) Testing
 
 The gem has been tested on BART, Google Weather and NextBus APIs. 
 
+To run test by ip location, please, [register](http://ipinfodb.com/register.php) for an API key.
 
-7) Limitations
+The key should be either placed into the test/data/keys/ipinfodb_key.txt file or passed as an environment variable:
+
+```
+API_KEY='\<your key\>' rake test
+```
+
+There is no existing api key provided with this gem as per the Terms and Conditions of the ipinfodb service. 
+
+8) Limitations
 
 * Api data must be presented either in XML or in JSON format. The distinction between XML and JSON is determinted automatically. 
 * When using this gem with external APIs, check Terms and Conditions of the API usage. 

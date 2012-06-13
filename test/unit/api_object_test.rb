@@ -12,14 +12,16 @@ class ApiObjectTest < MiniTest::Unit::TestCase
   @@estimate_directory = @@data_directory + "/estimate"
   @@weather_directory = @@data_directory + "/weather"
   @@bus_directory = @@data_directory + "/bus"
+  @@key_directory = @@data_directory +"/keys"
 
   @@glen_estimate = Station.load_from_xml(File.read(@@estimate_directory + '/glen.xml'))    
   @@sixteenth_estimate = Station.load_from_xml(File.read(@@estimate_directory + '/sixteenth.xml'))
   @@twenty_fourth_estimate = Station.load_from_xml(File.read(@@estimate_directory + '/twenty_fourth.xml'))
   
-
-
-  @@weather = Weather.load_from_xml(File.read(@@weather_directory + '/mountain_view.xml'))
+  @@weather_mv = Weather.load_from_xml(File.read(@@weather_directory + '/mountain_view.xml'))
+  @@weather_au = Weather.load_from_xml(File.read(@@weather_directory + '/austin.xml'))
+  @@ip_key = File.read(@@key_directory + "/ipinfodb_key.txt") rescue ENV['API_KEY']
+  IP = '99.156.82.20'
   
   @@muni_routes = Route.load_from_xml(File.read(@@bus_directory + "/muni_routes.xml"))
   @@muni_F = Route.load_from_xml(File.read(@@bus_directory + "/muni_F.xml"))
@@ -50,8 +52,17 @@ class ApiObjectTest < MiniTest::Unit::TestCase
   
 
   def test_should_get_correct_weather
-    weather = Weather.new(Weather.get_results(:weather => 'Mountain+View'))
-    assert_equal(weather, @@weather)
+    weather_mv = Weather.new(Weather.get_results(:weather => 'Mountain+View'))
+    assert_equal(weather_mv, @@weather_mv)
+    weather_au = Weather.new(Weather.get_results(:weather => '78744'))
+    assert_equal(weather_au, @@weather_au)
+  end
+  
+  def test_should_get_correct_weather_by_ip
+    unless @@ip_key.nil?
+      weather_au = Weather.new(Weather.get_results_by_ip(IP, @@ip_key, :weather => :zip_code))
+      assert_equal(weather_au, @@weather_au)
+    end
   end
 
   def test_should_get_correct_bus_routes
@@ -98,9 +109,6 @@ private
     
   def business_time? now
     unless now.to_date.sunday? 
-         #t = now.to_time.localtime(now.zone)
-         #t1 = DateTime.strptime("#{now.month}/#{now.day}/#{now.year} 10:00:00 AM #{now.zone}", "%m/%d/%Y %I:%M:%S %p %:z").to_time.localtime(now.zone)
-         #t2 = DateTime.strptime("#{now.month}/#{now.day}/#{now.year} 08:00:00 PM #{now.zone}", "%m/%d/%Y %I:%M:%S %p %:z").to_time.localtime(now.zone)
          t1 = DateTime.strptime("#{now.month}/#{now.day}/#{now.year} 10:00:00 AM #{now.zone}", "%m/%d/%Y %I:%M:%S %p %:z")
          t2 = DateTime.strptime("#{now.month}/#{now.day}/#{now.year} 08:00:00 PM #{now.zone}", "%m/%d/%Y %I:%M:%S %p %:z")
          return now > t1 && now < t2
