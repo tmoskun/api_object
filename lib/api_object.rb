@@ -17,12 +17,13 @@ module ActiveApi
           instance_eval do
           
              def get_results_by_ip ip, arguments = {}
-                self.api_key = arguments.delete(:key) unless api_key_set?
+                self.api_key = arguments.delete(:key) if arguments[:key]
                 location = GeoIp.geolocation(ip)
                 raise unless location[:status_code] == "OK"
                 get_results [*arguments.keys].inject({}) { |opts, a| opts.merge(a.to_sym => location[arguments[a.to_sym]]) }
                 rescue
                   puts "WARNING: Cannot get results or location by ip. Verify that you have a valid key for the ipinfodb.com service"
+                  return {}
              end
           
              def get_results options = {}
@@ -36,17 +37,13 @@ module ActiveApi
              end 
              
              def api_key=(key)
-                GeoIp.api_key = key unless api_key_set?
+                GeoIp.api_key = key
              end
              
              def api_key
                 GeoIp.api_key
              end
-             
-             def api_key_set?
-                !!GeoIp.api_key
-             end
-             
+                       
              def warning_invalid_url url
                "The request url is #{url}, please, check if it's invalid of there is no connectivity." unless url.nil?
              end

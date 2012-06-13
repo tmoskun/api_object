@@ -22,6 +22,7 @@ class ApiObjectTest < MiniTest::Unit::TestCase
   @@weather_au = Weather.load_from_xml(File.read(@@weather_directory + '/austin.xml'))
   @@ip_key = File.read(@@key_directory + "/ipinfodb_key.txt") rescue ENV['API_KEY']
   IP = '99.156.82.20'
+  GeoIp.api_key = nil
   
   @@muni_routes = Route.load_from_xml(File.read(@@bus_directory + "/muni_routes.xml"))
   @@muni_F = Route.load_from_xml(File.read(@@bus_directory + "/muni_F.xml"))
@@ -58,17 +59,24 @@ class ApiObjectTest < MiniTest::Unit::TestCase
     assert_equal(weather_au, @@weather_au)
   end
   
+  
   def test_should_get_correct_weather_by_ip
     unless @@ip_key.nil?
       weather_au = Weather.new(Weather.get_results_by_ip(IP, :key => @@ip_key, :weather => :zip_code))
       assert_equal(weather_au, @@weather_au)
     end
   end
-  
+   
   def test_should_get_correct_weather_with_key_preset
     GeoIp.api_key = @@ip_key
     weather_au = Weather.new(Weather.get_results_by_ip(IP, :weather => :zip_code))
     assert_equal(weather_au, @@weather_au)
+  end
+  
+  def test_should_not_get_correct_weather_with_no_key
+    GeoIp.api_key = nil
+    weather_au = Weather.new(Weather.get_results_by_ip(IP, :weather => :zip_code))
+    assert_empty(weather_au)
   end
 
   def test_should_get_correct_bus_routes
@@ -89,7 +97,6 @@ class ApiObjectTest < MiniTest::Unit::TestCase
     routes = Route.get_results(:a => 'sffg').map {|r| Route.new(r)}
     assert(routes.empty?, "Routes should be an empty object")
   end
-  
   
 private  
   
