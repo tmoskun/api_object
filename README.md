@@ -120,10 +120,10 @@ The [geo_ip gem](https://github.com/jeroenj/geo_ip) retrieves location as:
 To get the data, call "get_results_by_ip" instead of "get_results":
 
 ```
-data = Weather.get_results_by_ip('99.156.82.20', KEY, :weather => :zip_code)
+data = Weather.get_results_by_ip('99.156.82.20', :key => <KEY>, :weather => :zip_code)
 ```
 
-The third parameter in the function is to define what fields from the location object are passed as what parameter. In this case, the original function is:
+The function takes parameters to define what fields from the location object are passed as what parameter. In this case, "zip_code" field is passed as "weather" parameter and the original function is:
 
 ```
 data = Weather.get_results(:weather => '99.156.82.20')

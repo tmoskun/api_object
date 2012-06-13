@@ -16,8 +16,8 @@ module ActiveApi
           self.url, self.action, self.key, self.mode, self.url_options, self.data_tags, self.object_name = [options[:url], options[:action], options[:key], options[:mode], (options[:url_options] || {}), ([*options[:data_tags]] || []), (options[:object_name] || self.to_s.downcase.gsub(/^(.+::)(.+)$/, '\2'))]
           instance_eval do
           
-             def get_results_by_ip ip, key, arguments = {}
-                self.api_key = key
+             def get_results_by_ip ip, arguments = {}
+                self.api_key = arguments.delete(:key) unless api_key_set?
                 location = GeoIp.geolocation(ip)
                 raise unless location[:status_code] == "OK"
                 get_results [*arguments.keys].inject({}) { |opts, a| opts.merge(a.to_sym => location[arguments[a.to_sym]]) }
@@ -36,7 +36,15 @@ module ActiveApi
              end 
              
              def api_key=(key)
-                GeoIp.api_key = key
+                GeoIp.api_key = key unless api_key_set?
+             end
+             
+             def api_key
+                GeoIp.api_key
+             end
+             
+             def api_key_set?
+                !!GeoIp.api_key
              end
              
              def warning_invalid_url url

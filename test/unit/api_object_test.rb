@@ -60,9 +60,15 @@ class ApiObjectTest < MiniTest::Unit::TestCase
   
   def test_should_get_correct_weather_by_ip
     unless @@ip_key.nil?
-      weather_au = Weather.new(Weather.get_results_by_ip(IP, @@ip_key, :weather => :zip_code))
+      weather_au = Weather.new(Weather.get_results_by_ip(IP, :key => @@ip_key, :weather => :zip_code))
       assert_equal(weather_au, @@weather_au)
     end
+  end
+  
+  def test_should_get_correct_weather_with_key_preset
+    GeoIp.api_key = @@ip_key
+    weather_au = Weather.new(Weather.get_results_by_ip(IP, :weather => :zip_code))
+    assert_equal(weather_au, @@weather_au)
   end
 
   def test_should_get_correct_bus_routes
