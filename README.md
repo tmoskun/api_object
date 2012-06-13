@@ -100,12 +100,6 @@ The service requires an API key, in order to get it [register](http://ipinfodb.c
 
 Consider making a donation to [ipinfodb.com](http://ipinfodb.com/) at [http://ipinfodb.com/donate.php](http://ipinfodb.com/donate.php).
 
-To get the data, call "get_results_by_ip" instead of "get_results":
-
-```
-data = Weather.get_results_by_ip('99.156.82.20', KEY, :weather => :zip_code)
-```
-
 The [geo_ip gem](https://github.com/jeroenj/geo_ip) retrieves location as:
 
 ```
@@ -123,6 +117,12 @@ The [geo_ip gem](https://github.com/jeroenj/geo_ip) retrieves location as:
 }
 ```
 
+To get the data, call "get_results_by_ip" instead of "get_results":
+
+```
+data = Weather.get_results_by_ip('99.156.82.20', KEY, :weather => :zip_code)
+```
+
 The third parameter in the function is to define what fields from the location object are passed as what parameter. In this case, the original function is:
 
 ```
@@ -138,7 +138,7 @@ To run test by ip location, please, [register](http://ipinfodb.com/register.php)
 The key should be either placed into the test/data/keys/ipinfodb_key.txt file or passed as an environment variable:
 
 ```
-API_KEY='\<your key\>' rake test
+API_KEY='<your key>' rake test
 ```
 
 There is no existing api key provided with this gem as per the Terms and Conditions of the ipinfodb service. 
