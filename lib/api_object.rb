@@ -4,17 +4,19 @@ require "active_support/all"
 require "geo_ip"
 
 module ActiveApi
-      
+        
     module ClassMethods 
-    
+          
       def self.extended(base)
         base.send(:extend, Query)     
       end
               
       def initialize_from_api options = {}
+        
           class_attribute :url, :action, :key, :mode, :url_options, :data_tags, :object_name
           self.url, self.action, self.key, self.mode, self.url_options, self.data_tags, self.object_name = [options[:url], options[:action], options[:key], options[:mode], (options[:url_options] || {}), ([*options[:data_tags]] || []), (options[:object_name] || self.to_s.downcase.gsub(/^(.+::)(.+)$/, '\2'))]
           instance_eval do
+            
           
              def get_results_by_ip ip, arguments = {}
                 self.api_key = arguments.delete(:key) if arguments[:key]
@@ -22,8 +24,8 @@ module ActiveApi
                 raise unless location[:status_code] == "OK"
                 get_results [*arguments.keys].inject({}) { |opts, a| opts.merge(a.to_sym => location[arguments[a.to_sym]]) }
                 rescue
-                  puts "WARNING: Cannot get results or location by ip. Verify that you have a valid key for the ipinfodb.com service"
-                  return {}
+                  puts "ERROR: Cannot get results or location by ip. Verify that you have a valid key for the ipinfodb.com service"
+                  return ApiObjectError.new(:class => self, :errors => invalid_loc_msg)
              end
           
              def get_results options = {}
@@ -32,8 +34,8 @@ module ActiveApi
                result = query_api(self.url, self.action, self.mode, self.url_options.merge(options))
                process_result result
                rescue
-                 puts "WARNING: The request returned no valid data. #{warning_invalid_url result[:url]}"
-                 return {}
+                 puts "ERROR: The request returned no valid data. #{error_invalid_url result[:url]}"
+                 return ApiObjectError.new(:class => self, :errors => invalid_url_msg)
              end 
              
              def api_key=(key)
@@ -44,8 +46,20 @@ module ActiveApi
                 GeoIp.api_key
              end
                        
-             def warning_invalid_url url
+             def error_invalid_url url
                "The request url is #{url}, please, check if it's invalid of there is no connectivity." unless url.nil?
+             end
+             
+             def invalid_url_msg
+               "Cannot get results from the url"
+             end
+             
+             def invalid_loc_msg
+               "Cannot obtain results by ip, check the location"
+             end
+             
+             def invalid_data_msg
+               "Cannot initialize the object"
              end
                                           
              private
@@ -74,9 +88,10 @@ module ActiveApi
    end
    
    module InstanceMethods
-            
+                
       def initialize(*args)
           url = args.first.delete(:url)
+          errors = args.first.delete(:errors)
           tags = respond_to?('data_tags') ? self.data_tags : args.last[:tags]
           args.first.each do |k, v| 
              k = k.gsub(/@/, '')
@@ -87,11 +102,18 @@ module ActiveApi
                 instance_variable_set("@#{k.to_s}", result)
              end
           end if args.first.is_a?(Hash)
-          puts "WARNING: data passed for #{self.class} initialization was invalid. #{self.class.warning_invalid_url url}" if self.empty?
+          if self.empty?
+            puts "ERROR: data passed for #{self.class} initialization was invalid. #{self.class.error_invalid_url url}" 
+            @errors = errors || self.class.invalid_data_msg
+          end
       end
       
       def empty?
-          self.instance_variables.empty?
+          (self.instance_variables - [:@errors]).empty?
+      end
+      
+      def has_errors?
+        self.instance_variables.include?(:@errors)
       end
             
             
@@ -142,8 +164,41 @@ module ActiveApi
        class_attribute :columns, :assoc 
        self.columns, self.assoc = [{}, {}]
        
-    end
+       attr_reader :errors
+       
+    end 
     
-      
+    class ApiObjectError < Hash
+        attr_reader :errors, :klass
+        
+        def initialize *args
+          options = args.extract_options!
+          @errors = options.delete(:errors)
+          @klass = options.delete(:class)
+        end
+                
+        def keys
+          [:errors]
+        end
+        
+        def [](key)
+          eval("self.#{key.to_s}") if keys.include?(key)
+        end
+        
+        def map &block
+          klass.new({:errors => @errors})
+        end
+        
+        alias_method :collect, :map
+        
+        def inspect
+          "ApiObjectError: #{@errors}"
+        end
+        
+        def to_s
+          inspect
+        end
+    end 
+       
   end
-             
+          

@@ -129,7 +129,16 @@ The function takes parameters to define what fields from the location object are
 data = Weather.get_results(:weather => '99.156.82.20')
 ```
 
-7) Testing
+7) Error handling
+
+In case data cannot be retrived (possible causes might be a wrong url or service downtime), the object returned is empty. Error messages could be checked using functions errors and has_errors?
+
+```
+station.has_errors? 
+errors = station.errors
+```
+
+8) Testing
 
 The gem has been tested on BART, Google Weather and NextBus APIs. 
 
@@ -143,9 +152,10 @@ API_KEY='<your key>' rake test
 
 There is no existing api key provided with this gem as per the Terms and Conditions of the ipinfodb service. 
 
-8) Limitations
+9) Limitations
 
 * Api data must be presented either in XML or in JSON format. The distinction between XML and JSON is determinted automatically. 
+* Location by ip service uses a free database which is not always reliable. 
 * When using this gem with external APIs, check Terms and Conditions of the API usage. 
 * If something is not working, feel free to submit bugs and or/contribute. 
   

@@ -8,11 +8,15 @@ class ApiObjectTest < MiniTest::Unit::TestCase
   include ActiveApi
   include TestObjects
   
+  IP = '99.156.82.20'
+  GeoIp.api_key = nil 
+  
   @@data_directory = File.expand_path('../../data', __FILE__)
   @@estimate_directory = @@data_directory + "/estimate"
   @@weather_directory = @@data_directory + "/weather"
   @@bus_directory = @@data_directory + "/bus"
   @@key_directory = @@data_directory +"/keys"
+  
 
   @@glen_estimate = Station.load_from_xml(File.read(@@estimate_directory + '/glen.xml'))    
   @@sixteenth_estimate = Station.load_from_xml(File.read(@@estimate_directory + '/sixteenth.xml'))
@@ -21,8 +25,6 @@ class ApiObjectTest < MiniTest::Unit::TestCase
   @@weather_mv = Weather.load_from_xml(File.read(@@weather_directory + '/mountain_view.xml'))
   @@weather_au = Weather.load_from_xml(File.read(@@weather_directory + '/austin.xml'))
   @@ip_key = File.read(@@key_directory + "/ipinfodb_key.txt") rescue ENV['API_KEY']
-  IP = '99.156.82.20'
-  GeoIp.api_key = nil
   
   @@muni_routes = Route.load_from_xml(File.read(@@bus_directory + "/muni_routes.xml"))
   @@muni_F = Route.load_from_xml(File.read(@@bus_directory + "/muni_F.xml"))
@@ -64,6 +66,7 @@ class ApiObjectTest < MiniTest::Unit::TestCase
     unless @@ip_key.nil?
       weather_au = Weather.new(Weather.get_results_by_ip(IP, :key => @@ip_key, :weather => :zip_code))
       assert_equal(weather_au, @@weather_au)
+      refute_has_errors(weather_au)
     end
   end
    
@@ -71,32 +74,43 @@ class ApiObjectTest < MiniTest::Unit::TestCase
     GeoIp.api_key = @@ip_key
     weather_au = Weather.new(Weather.get_results_by_ip(IP, :weather => :zip_code))
     assert_equal(weather_au, @@weather_au)
+    refute_has_errors(weather_au)
   end
-  
+   
   def test_should_not_get_correct_weather_with_no_key
     GeoIp.api_key = nil
     weather_au = Weather.new(Weather.get_results_by_ip(IP, :weather => :zip_code))
     assert_empty(weather_au)
+    assert_has_errors(weather_au)
   end
 
   def test_should_get_correct_bus_routes
     routes = Route.get_results(:a => 'sf-muni', :command => 'routeList').map {|r| Route.new(r)}
     assert_equal_route_list(routes, @@muni_routes)
+    routes.map {|r| refute_has_errors(r)}
   end
-  
+
   def test_should_get_correct_route_information
     route_F = Route.new(Route.get_results(:a => 'sf-muni', :command => 'routeConfig', :r => 'F', :mode => 'terse'))
     assert_equal(route_F, @@muni_F)
+    refute_has_errors(route_F)
   end
-   
+
   def test_should_handle_invalid_url
-    estimate = Station.new(Station.get_results(:orig => 'YES'))
+    estimate = Station.new(Station.get_results(:orig => 'YES'))  
     assert(estimate.empty?, "Estimate should be an empty object")
+    assert_has_errors(estimate)
+    assert(estimate.errors, Station.invalid_url_msg)
     weather = Weather.new(Weather.get_results(:weather => "Here"))
     assert(weather.empty?, "Weather should be an empty object")
-    routes = Route.get_results(:a => 'sffg').map {|r| Route.new(r)}
+    assert_has_errors(weather)
+    assert(weather.errors, Weather.invalid_data_msg)
+    routes = Route.get_results(:a => 'sffg').collect {|r| Route.new(r)}
     assert(routes.empty?, "Routes should be an empty object")
+    assert_has_errors(routes)
+    assert(routes.errors, Route.invalid_url_msg)
   end
+  
   
 private  
   
@@ -117,6 +131,14 @@ private
   
   def assert_equal_route_list route_list, sample_route_list
     return assert(route_list.include_all?(sample_route_list), "Route list should include all the sample routes")
+  end
+  
+  def assert_has_errors obj
+    return assert(obj.has_errors?, "Object should have errors")
+  end
+  
+  def refute_has_errors obj
+    return refute(obj.has_errors?, "Object shouldn't have errors")
   end
   
     
