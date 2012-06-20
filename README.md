@@ -94,11 +94,11 @@ stations = data.map {|d| Station.new(d)}
 
 6) Getting location based data by ip.
 
+A) Getting location using ipinfodb.com (requires api key)
+
 This gem uses [geo_ip gem](https://github.com/jeroenj/geo_ip) and [ipinfodb.com](http://ipinfodb.com/) webservice to retrieve location based on ip. 
 
 The service requires an API key, in order to get it [register](http://ipinfodb.com/register.php) at the web site. 
-
-Consider making a donation to [ipinfodb.com](http://ipinfodb.com/) at [http://ipinfodb.com/donate.php](http://ipinfodb.com/donate.php).
 
 The [geo_ip gem](https://github.com/jeroenj/geo_ip) retrieves location as:
 
@@ -124,6 +124,40 @@ data = Weather.get_results_by_ip('99.156.82.20', :key => <KEY>, :weather => :zip
 ```
 
 The function takes parameters to define what fields from the location object are passed as what parameter. In this case, "zip_code" field is passed as "weather" parameter and the original function is:
+
+```
+data = Weather.get_results(:weather => '99.156.82.20')
+```
+*This service is allowed to be used only for internal business purposes.* Please, verify with the Terms and Conditions when registering for a key. 
+
+
+B) Getting location using freegeoip.net (requires no key)
+
+As the ipinfodb.com service has limitations in the terms of use, the gem [freegeoip gem](https://github.com/ezkl/freegeoip) is used whenever no api key is provided. Unfortunatelly, their database last update was April 29, 2011. 
+
+The [freegeoip gem](https://github.com/ezkl/freegeoip) retrieves location as:
+
+```
+{
+	"city" => "Round Rock"
+	"region_code" => "TX"
+	"region_name" => "Texas"
+	"metrocode" => "635"
+	"zipcode" => "78681"
+	"longitude" => "-97.7286"
+	"latitude" => "30.5321"
+	"country_code" => "US"
+	"ip" => "99.156.82.20"
+	"country_name" => "United States"
+}
+```
+To get the data, call "get_results_by_ip" instead of "get_results":
+
+```
+data = Weather.get_results_by_ip('99.156.82.20', :weather => :zipcode)
+``
+
+The function takes parameters to define what fields from the location object are passed as what parameter. In this case, "zipcode" field is passed as "weather" parameter and the original function is:
 
 ```
 data = Weather.get_results(:weather => '99.156.82.20')

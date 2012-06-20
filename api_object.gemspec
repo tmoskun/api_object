@@ -30,5 +30,6 @@ Gem::Specification.new do |s|
   s.add_dependency('nori', '>=1.1')
   s.add_dependency('rest-client', '>= 1.6')
   s.add_dependency 'geo_ip'
+  s.add_dependency 'freegeoip'
   
 end

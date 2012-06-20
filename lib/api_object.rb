@@ -2,6 +2,7 @@ require "api_object/version"
 require "api_object/query"
 require "active_support/all"
 require "geo_ip"
+require 'freegeoip'
 
 module ActiveApi
         
@@ -20,12 +21,17 @@ module ActiveApi
           
              def get_results_by_ip ip, arguments = {}
                 self.api_key = arguments.delete(:key) if arguments[:key]
-                location = GeoIp.geolocation(ip)
-                raise unless location[:status_code] == "OK"
-                get_results [*arguments.keys].inject({}) { |opts, a| opts.merge(a.to_sym => location[arguments[a.to_sym]]) }
+                if self.api_key
+                  location = GeoIp.geolocation(ip)
+                  raise unless location[:status_code] == "OK"
+                  return get_results [*arguments.keys].inject({}) { |opts, a| opts.merge(a.to_sym => location[arguments[a.to_sym]]) }
+                else
+                  location = FreeGeoIP.locate(ip)
+                  get_results [*arguments.keys].inject({}) { |opts, a| opts.merge(a.to_sym => location[arguments[a.to_sym].to_s]) }
+                end
                 rescue
-                  puts "ERROR: Cannot get results or location by ip. Verify that you have a valid key for the ipinfodb.com service"
-                  return ApiObjectError.new(:class => self, :errors => invalid_loc_msg)
+                  puts "ERROR: Cannot get results or location by ip. Verify that you have a valid key for the location service"
+                 return ApiObjectError.new(:class => self, :errors => invalid_loc_msg)
              end
           
              def get_results options = {}

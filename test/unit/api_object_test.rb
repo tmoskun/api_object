@@ -24,6 +24,7 @@ class ApiObjectTest < MiniTest::Unit::TestCase
   
   @@weather_mv = Weather.load_from_xml(File.read(@@weather_directory + '/mountain_view.xml'))
   @@weather_au = Weather.load_from_xml(File.read(@@weather_directory + '/austin.xml'))
+  @@weather_rr = Weather.load_from_xml(File.read(@@weather_directory + '/round_rock.xml'))
   @@ip_key = File.read(@@key_directory + "/ipinfodb_key.txt") rescue ENV['API_KEY']
   
   @@muni_routes = Route.load_from_xml(File.read(@@bus_directory + "/muni_routes.xml"))
@@ -62,14 +63,19 @@ class ApiObjectTest < MiniTest::Unit::TestCase
   end
   
   
-  def test_should_get_correct_weather_by_ip
-    unless @@ip_key.nil?
-      weather_au = Weather.new(Weather.get_results_by_ip(IP, :key => @@ip_key, :weather => :zip_code))
-      assert_equal(weather_au, @@weather_au)
-      refute_has_errors(weather_au)
-    end
+  # Note that the 2 services give slightly different location
+  def test_should_get_correct_weather_by_ip_with_no_key
+    weather_rr = Weather.new(Weather.get_results_by_ip(IP, :weather => :zipcode))
+    assert_equal(weather_rr, @@weather_rr)
+    refute_has_errors(weather_rr)
   end
-   
+  
+  def test_should_get_correct_weather_with_key
+    weather_au = Weather.new(Weather.get_results_by_ip(IP, :key => @@ip_key, :weather => :zip_code))
+    assert_equal(weather_au, @@weather_au)
+    refute_has_errors(weather_au)
+  end
+
   def test_should_get_correct_weather_with_key_preset
     GeoIp.api_key = @@ip_key
     weather_au = Weather.new(Weather.get_results_by_ip(IP, :weather => :zip_code))
@@ -77,12 +83,6 @@ class ApiObjectTest < MiniTest::Unit::TestCase
     refute_has_errors(weather_au)
   end
    
-  def test_should_not_get_correct_weather_with_no_key
-    GeoIp.api_key = nil
-    weather_au = Weather.new(Weather.get_results_by_ip(IP, :weather => :zip_code))
-    assert_empty(weather_au)
-    assert_has_errors(weather_au)
-  end
 
   def test_should_get_correct_bus_routes
     routes = Route.get_results(:a => 'sf-muni', :command => 'routeList').map {|r| Route.new(r)}

@@ -1,0 +1,49 @@
+<xml_api_reply version="1">
+	<weather module_id="0" tab_id="0" mobile_row="0" mobile_zipped="1" row="0" section="0">
+		<forecast_information>
+			<city data="Round Rock, TX"/>
+			<postal_code data="78681"/>
+			<latitude_e6 data=""/>
+			<longitude_e6 data=""/>
+			<forecast_date data="2012-06-20"/>
+			<current_date_time data="2012-06-20 22:47:00 +0000"/>
+			<unit_system data="US"/>
+		</forecast_information>
+		<current_conditions>
+			<condition data="Clear"/>
+			<temp_f data="84"/>
+			<temp_c data="29"/>
+			<humidity data="Humidity: 55%"/>
+			<icon data="/ig/images/weather/sunny.gif"/>
+			<wind_condition data="Wind: S at 12 mph"/>
+		</current_conditions>
+		<forecast_conditions>
+			<day_of_week data="Wed"/>
+			<low data="75"/>
+			<high data="90"/>
+			<icon data="/ig/images/weather/chance_of_storm.gif"/>
+			<condition data="Chance of Storm"/>
+			</forecast_conditions>
+		<forecast_conditions>
+			<day_of_week data="Thu"/>
+			<low data="73"/>
+			<high data="95"/>
+			<icon data="/ig/images/weather/chance_of_storm.gif"/>
+			<condition data="Chance of Storm"/>
+		</forecast_conditions>
+		<forecast_conditions>
+			<day_of_week data="Fri"/>
+			<low data="73"/>
+			<high data="97"/>
+			<icon data="/ig/images/weather/mostly_sunny.gif"/>
+			<condition data="Mostly Sunny"/>
+		</forecast_conditions>
+		<forecast_conditions>
+			<day_of_week data="Sat"/>
+			<low data="75"/>
+			<high data="99"/>
+			<icon data="/ig/images/weather/sunny.gif"/>
+			<condition data="Clear"/>
+		</forecast_conditions>
+	</weather>
+</xml_api_reply>
