@@ -155,7 +155,7 @@ To get the data, call "get_results_by_ip" instead of "get_results":
 
 ```
 data = Weather.get_results_by_ip('99.156.82.20', :weather => :zipcode)
-``
+```
 
 The function takes parameters to define what fields from the location object are passed as what parameter. In this case, "zipcode" field is passed as "weather" parameter and the original function is:
 
