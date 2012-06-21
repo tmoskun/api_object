@@ -176,7 +176,7 @@ errors = station.errors
 
 The gem has been tested on BART, Google Weather and NextBus APIs. 
 
-To run tests by ip location for ipinfodb.com service, please, [register](http://ipinfodb.com/register.php) for an API key. Otherwise, comment out those tests. 
+To run tests by ip location for ipinfodb.com service, please, [register](http://ipinfodb.com/register.php) for an API key.  
 
 The key should be either placed into the test/data/keys/ipinfodb_key.txt file or passed as an environment variable:
 
@@ -185,6 +185,8 @@ API_KEY='<your key>' rake test
 ```
 
 There is no existing api key provided with this gem as per the Terms and Conditions of the ipinfodb service. 
+
+If there is no key provided, those tests will be avoided. 
 
 9) Limitations
 
