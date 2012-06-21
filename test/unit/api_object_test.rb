@@ -54,7 +54,6 @@ class ApiObjectTest < MiniTest::Unit::TestCase
     end
   end
   
-
   def test_should_get_correct_weather
     weather_mv = Weather.new(Weather.get_results(:weather => 'Mountain+View'))
     assert_equal(weather_mv, @@weather_mv)
@@ -66,11 +65,11 @@ class ApiObjectTest < MiniTest::Unit::TestCase
   # Note that the 2 services give slightly different location
   def test_should_get_correct_weather_by_ip_with_no_key
     GeoIp.api_key = nil
-    weather_rr = Weather.new(Weather.get_results_by_ip(IP, :weather => :zipcode))
+    weather_rr = Weather.new(Weather.get_results_by_ip(IP, :key => nil, :weather => :zipcode))
     assert_equal(weather_rr, @@weather_rr)
     refute_has_errors(weather_rr)
   end
-  
+   
   def test_should_get_correct_weather_with_key
     unless @@ip_key.nil? 
       weather_au = Weather.new(Weather.get_results_by_ip(IP, :key => @@ip_key, :weather => :zip_code))
@@ -116,7 +115,7 @@ class ApiObjectTest < MiniTest::Unit::TestCase
     assert(routes.errors, Route.invalid_url_msg)
   end
   
-  
+
 private  
   
   #ensure that the estimates of the first station include the sample
