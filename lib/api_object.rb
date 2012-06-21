@@ -20,7 +20,7 @@ module ActiveApi
             
           
              def get_results_by_ip ip, arguments = {}
-                self.api_key = arguments.delete(:key) if arguments[:key]
+                self.api_key = arguments.delete(:key) if arguments.include?(:key)
                 if self.api_key
                   location = GeoIp.geolocation(ip)
                   raise unless location[:status_code] == "OK"
