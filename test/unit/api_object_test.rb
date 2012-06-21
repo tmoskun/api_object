@@ -65,22 +65,27 @@ class ApiObjectTest < MiniTest::Unit::TestCase
   
   # Note that the 2 services give slightly different location
   def test_should_get_correct_weather_by_ip_with_no_key
+    GeoIp.api_key = nil
     weather_rr = Weather.new(Weather.get_results_by_ip(IP, :weather => :zipcode))
     assert_equal(weather_rr, @@weather_rr)
     refute_has_errors(weather_rr)
   end
   
   def test_should_get_correct_weather_with_key
-    weather_au = Weather.new(Weather.get_results_by_ip(IP, :key => @@ip_key, :weather => :zip_code))
-    assert_equal(weather_au, @@weather_au)
-    refute_has_errors(weather_au)
+    unless @@ip_key.nil? 
+      weather_au = Weather.new(Weather.get_results_by_ip(IP, :key => @@ip_key, :weather => :zip_code))
+      assert_equal(weather_au, @@weather_au)
+      refute_has_errors(weather_au)
+    end
   end
 
   def test_should_get_correct_weather_with_key_preset
-    GeoIp.api_key = @@ip_key
-    weather_au = Weather.new(Weather.get_results_by_ip(IP, :weather => :zip_code))
-    assert_equal(weather_au, @@weather_au)
-    refute_has_errors(weather_au)
+    unless @@ip_key.nil? 
+      GeoIp.api_key = @@ip_key
+      weather_au = Weather.new(Weather.get_results_by_ip(IP, :weather => :zip_code))
+      assert_equal(weather_au, @@weather_au)
+      refute_has_errors(weather_au)
+    end
   end
    
 
