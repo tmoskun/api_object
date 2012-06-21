@@ -176,7 +176,7 @@ errors = station.errors
 
 The gem has been tested on BART, Google Weather and NextBus APIs. 
 
-To run test by ip location, please, [register](http://ipinfodb.com/register.php) for an API key.
+To run tests by ip location for ipinfodb.com service, please, [register](http://ipinfodb.com/register.php) for an API key. Otherwise, comment out those tests. 
 
 The key should be either placed into the test/data/keys/ipinfodb_key.txt file or passed as an environment variable:
 
