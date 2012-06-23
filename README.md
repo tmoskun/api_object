@@ -13,7 +13,7 @@ gem install api_object
 1) Subclass your objects from ActiveApi::ApiObject
 
 ```
-class Station < ActiveApi::ApiObject
+class Departure < ActiveApi::ApiObject
 end
 
 class Estimate < ActiveApi::ApiObject
